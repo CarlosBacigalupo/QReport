@@ -1,2 +1,2 @@
 # QReport
-Produces a summary from data observed for the GALAH survey. 
+Produces a quality summary from data observed for the GALAH survey. 
