@@ -13,44 +13,37 @@ Creates a summary of GALAH data quality for a given date.
 fromaddr = 'kalumbe@internode.on.net'
 emails = ['kalumbe@gmail.com','kalumbe@internode.on.net'] #email list to send results
 out_folder = 'curr_report/'
-repModules_folder = 'modules/'
+repModules_folder = 'Rmodules/'
 base_folder = '/Users/Carlos/Documents/QReport/'
 IC_folder = 'IC/' #input catalogue folder
 log_file = out_folder + 'report.log'
-files = [out_folder + 'dataReport.tar'] #files to attach to the email. 
-
-
-
+galah_dir = '/Users/Carlos/Documents/HERMES/data/'
 
 
 ############################################
 #Functions
-
-def sendEmail(fromaddr,toaddrs, files = None):
-    
-    #create MIME object
+def sendEmail(fromaddr, toaddrs, files = None):
+    #create MIME message
     msg = MIMEMultipart()
     msg['Subject'] = 'GALAH observing report'
-    msg['From'] = send_from
-    msg['To'] = send_to
+    msg['From'] = fromaddr
+    msg['To'] = ', '.join(toaddrs)
     msg['Date'] = formatdate(localtime=True)
-    msg.attach(MIMEText('Attached todays summary'))
+#     msg.attach(MIMEText('Attached todays summary'))
 
     #add attachments
     for f in files or []:
-    with open(f, "rb") as fil:
-        msg.attach(MIMEApplication(
-            fil.read(),
-            Content_Disposition='attachment; filename="%s"' % basename(f)
-        ))
-        print Content_Disposition='attachment; filename="%s"' % basename(f)
-        
+        with open(f, "rb") as fil:
+            msg.attach(MIMEApplication(
+                fil.read(),
+                Content_Disposition='attachment; filename="%s"' % basename(f)
+            ))        
 
     # Credentials (if needed)
-    # username = 'kalumbe'
-    # password = ''
+    username = 'kalumbe'
+    password = ''
 
-    # The actual mail deliver
+    # The actual mail delivery
     server = smtplib.SMTP('mail.internode.on.net', 25 )
     # server.set_debuglevel(True)
     # server.ehlo()
@@ -60,9 +53,15 @@ def sendEmail(fromaddr,toaddrs, files = None):
     server.sendmail(fromaddr, toaddrs, msg.as_string())
     server.quit()
 
-
+def create_common():
+    file = open(base_folder+repModules_folder+'common.py','w')
+    file.write('galah_dir = \'' +galah_dir+'\' \n')
+    file.write('d = '+str(d)+'\n')
+    file.write('base_folder = \'' +base_folder+'\' \n')
+    file.write('IC_folder = \'' +IC_folder+'\' \n')
+    file.close()
     
-
+    
 
 
 ############################################
@@ -70,7 +69,6 @@ def sendEmail(fromaddr,toaddrs, files = None):
 ############################################
 print 'Starting script'
 print 'Changing to base folder', base_folder
-
 
 okGo = True
 
@@ -90,32 +88,48 @@ try:
     from email.utils import COMMASPACE, formatdate
     print 'Importing smtplib module'
     import smtplib
+    print 'Importing datetime module'
+    from datetime import datetime
+    print 'Importing sys module'
+    import sys
 except:
     print 'Imports failed. Module missing.'
     okGo=False
     
-os.chdir(base_folder)
     
 #tests report modules
 if os.path.isdir(base_folder+repModules_folder)==False: os.makedirs(base_folder+repModules_folder) #creates curr_report folder
 try:
-
-    repModules = glob.glob(repModules_folder+'*.py')
+    repModules = glob.glob(base_folder+repModules_folder+'*.py')
     if len(repModules)<1:
-        print 'No reports found in',repModules_folder
+        print 'No reports found in',base_folder+repModules_folder
         okGo=False
 except: 
-    print 'No reports found in',repModules_folder
+    print 'No reports found in',base_folder+repModules_folder
     okGo=False
 
     
-
 #checks for data
-try:
-    pass
-except:
-    okGo=False
+if okGo==True:
+    if len(sys.argv)>1:
+        d = sys.argv[1]
+        print sys.argv
+    else:
+        d = str(datetime.utcnow()).split()[0].replace('-','')[2:]
 
+    
+    if (d.isdigit() and (len(d)==6)):
+
+        if os.path.isdir(base_folder+repModules_folder)!=True:
+            print base_folder+repModules_folder, 'not found.'
+            okGo=False
+
+        if os.path.isdir(galah_dir+str(d))!=True:
+            print galah_dir+str(d), 'not found.'
+            okGo=False
+    else:
+        print 'Incorrect format in the data path:', d 
+        okGo=False
 
 #open log
 try:
@@ -127,29 +141,37 @@ except:
 # okGo==True if:
 # -- all python modules have been loaded
 # -- repModules has the list of report templates and len(repModules)>0. 
-
 if okGo==True:
-    all_files = [] #final array with file list. n tuples 
-    print 
-    print 'Changing folder to',repModules_folder
-    print 'All tests succeeded. Creating reports...'
-    os.chdir(base_folder+repModules_folder)
+    all_files = [] #final array with file list. n tuples where n=number of reports 
 
+    print
+    print 'Creating',repModules_folder+'common.py'
+    create_common()
+    print 
+
+    print 'Changing folder to',repModules_folder
+    os.chdir(base_folder+repModules_folder)
+    print 
+    
     #loops all reports. Runs and compiles results for each. 
+    print 'Found',len(repModules)-1,'modules.' #common.py is counted but not a report module, hence -1.
+    print 'All tests succeeded. Creating reports...'
     for i,thisModuleName in enumerate(repModules):
         thisModule = None
         
         #load/runs a module
         try:
             thisModuleName = thisModuleName.split('/')[-1][:-3] #parse module name without folder and .py bit.
-            print ''
-            print '>>>>>Running',thisModuleName
-            thisModule = importlib.import_module(thisModuleName)
-            if thisModule!=None: reload(thisModule)
+            if thisModuleName!='common':
+                print ''
+                print '>>>>>Running',thisModuleName
+                thisModule = importlib.import_module(thisModuleName)
         except:
-            print thisModule,' failed. Skipping it.'
+            print thisModuleName,'report failed. Skipping it.'
+            print 'Error:',
+            print sys.exc_info()
             thisModule=None
-            
+
         #checks returned data
         if thisModule!=None:
             try:
@@ -173,38 +195,39 @@ if okGo==True:
                 
                 try:    
                     print '   Moving',thisFile,'to', base_folder+out_folder+newFile
-                    print os.getcwd()
                     os.rename(thisFile,base_folder+out_folder+newFile) 
                 except:
                     print thisFile, 'not found. Skipped.'
 
                 all_files.append(output_files2)
                 
-    #prepares files
-    print
-    print 'Compressing files'
-    os.chdir(base_folder+out_folder)
-    os.system('tar -cf dataReport.tar *.*  --exclude=*.tar --remove-files')
-             
-    #emails results
-    sendEmail(fromaddr,emails,files)
+        print 
         
-    print 
+    #After reports finish, check output
+    if len(all_files)>0:
 
+        #prepares files
+        print
+        os.chdir(base_folder+out_folder)
+        print 'Compressing files'
+        os.system('tar -cf'+str(d)+'.tar *.*  --exclude=*.tar --remove-files')
+        print
+
+        #emails results
+        print 'Sending email'
+        files = [str(d)+'.tar'] #files to attach to the email. 
+#         sendEmail(fromaddr,emails,files)
+
+        print 
+    else:
+        
+        print 'No files returned by report modules. Report not created.'
+    
 else:
     print 'Initial checks failed. Report not created'
 
 # <codecell>
 
-basename(f)
-
-# <codecell>
-
-f
-
-# <codecell>
-
-os.path.isdir("/home/el")
 
 # <codecell>
 
