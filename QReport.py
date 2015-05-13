@@ -215,7 +215,7 @@ if okGo==True:
         #emails results
         print 'Sending email'
         files = [str(d)+'.tar'] #files to attach to the email. 
-#         sendEmail(fromaddr,emails,files)
+        sendEmail(fromaddr,emails,files)
 
         print 
     else:
