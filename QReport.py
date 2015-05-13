@@ -113,7 +113,6 @@ except:
 if okGo==True:
     if len(sys.argv)>1:
         d = sys.argv[1]
-        print sys.argv
     else:
         d = str(datetime.utcnow()).split()[0].replace('-','')[2:]
 
@@ -149,9 +148,9 @@ if okGo==True:
     create_common()
     print 
 
-    print 'Changing folder to',repModules_folder
-    os.chdir(base_folder+repModules_folder)
-    print 
+#     print 'Changing folder to',repModules_folder
+#     os.chdir(base_folder+repModules_folder)
+#     print 
     
     #loops all reports. Runs and compiles results for each. 
     print 'Found',len(repModules)-1,'modules.' #common.py is counted but not a report module, hence -1.
@@ -162,10 +161,10 @@ if okGo==True:
         #load/runs a module
         try:
             thisModuleName = thisModuleName.split('/')[-1][:-3] #parse module name without folder and .py bit.
-            if thisModuleName!='common':
+            if thisModuleName not in ['common', '__init__']:
                 print ''
                 print '>>>>>Running',thisModuleName
-                thisModule = importlib.import_module(thisModuleName)
+                thisModule = importlib.import_module(repModules_folder[:-1]+'.'+thisModuleName)
         except:
             print thisModuleName,'report failed. Skipping it.'
             print 'Error:',
@@ -225,10 +224,4 @@ if okGo==True:
     
 else:
     print 'Initial checks failed. Report not created'
-
-# <codecell>
-
-
-# <codecell>
-
 
