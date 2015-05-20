@@ -18,15 +18,18 @@ out_folder = 'curr_report/'
 repModules_folder = 'Rmodules/'
 
 base_folder = '/Users/Carlos/Documents/QReport/' #Carlos' laptop
-base_folder = '/home/galah/QReport' # in aatlxb
+base_folder = '/home/galah/QReport/' # in aatlxb
 
 IC_folder = 'IC/' #input catalogue folder
+IC_folder = 'IC/' #input catalogue folder
+
+IC_filename = 'galahic_v2.0L.ebf'
+IC_filename = 'galahic_v2.0L.ebf'
 
 log_file = out_folder + 'report.log'
 
 galah_dir = '/Users/Carlos/Documents/HERMES/data/'
-galah_dir = '/Users/Carlos/Documents/HERMES/data/'
-
+galah_dir = '/net/aatmacb/data_macb/galah/survey/'
 
 ############################################
 #Functions
@@ -223,7 +226,7 @@ if okGo==True:
         #emails results
         print 'Sending email'
         files = [str(d)+'.tar'] #files to attach to the email. 
-#         sendEmail(fromaddr,emails,files)
+        sendEmail(fromaddr,emails,files)
 
         print 
     else:

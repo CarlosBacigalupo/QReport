@@ -33,7 +33,7 @@ except:
 
 # <codecell>
 
-def create_CMD(Bmag,Vmag):
+def create_CMD(Kmag,Vmag):
     plt.scatter(Vmag-Kmag, Vmag, c='k', s=1)
     plt.title('Observed stars on '+convert_date(const.d))
     plt.xlabel('V-K [mag]')
@@ -93,41 +93,52 @@ if okGo==True:
 #     output_dict['Observers'] = ''
 
     allStars = []
+    allBMStars = []
     allICStars = []
 
     fileList = glob.glob(const.galah_dir + str(const.d) + '/data/ccd_1/*.fits')
 
     for thisFileName in fileList:
         thisFile = pf.open(thisFileName)
-        if thisFile[0].header['RUNCMD']=='RUN':
+        if ((thisFile[0].header['NDFCLASS']=='MFOBJECT') or (thisFile[0].header['NDFCLASS']=='MFFLEX')):
             RA.append(thisFile[0].header['MEANRA'])
             Dec.append(thisFile[0].header['MEANDEC'])
             allFields.append(thisFile[0].header['CFG_FILE'])
             
-            try:
-                fibres = thisFile['STRUCT.MORE.FIBRES'].data['TYPE']=='P'
-                stars = thisFile['STRUCT.MORE.FIBRES'].data['NAME'][fibres] #program stars
 
-                ICStarsF = np.char.find(stars,'galahic_')!=-1
-                ICStars = np.char.lstrip(stars[ICStarsF],'galahic_').astype(int)
+            try:
+                if thisFile[0].header['NDFCLASS']=='MFFLEX':
+                    BMstars = np.array([thisFile[0].header['STD_NAME']])
+                    
+                else:
+                    fibres = thisFile['STRUCT.MORE.FIBRES'].data['TYPE']=='P'
+                    stars = thisFile['STRUCT.MORE.FIBRES'].data['NAME'][fibres] #program stars
+
+                    ICStarsF = np.char.find(stars,'galahic_')!=-1
+                    ICStars = np.char.lstrip(stars[ICStarsF],'galahic_').astype(int)
             except:
                 stars = np.array([])
                 ICStars =np.array([])
+                BMstars = np.array([])
                 
             allStars=np.hstack((allStars,stars.tolist()))
+            allBMStars=np.hstack((allBMStars,BMstars.tolist()))
             allICStars=np.hstack((allICStars,ICStars.tolist()))
             
         thisFile.close()
     
     allStars = np.unique(allStars)
+    allBMStars = np.unique(allBMStars)
     allICStars = np.unique(allICStars)
     allFields = np.unique(allFields)
     totalStars = len(allStars)
+    totalBMStars = len(allBMStars)
     totalICStars = len(allICStars)
     totalFields = len(allFields)
     
     
     output_dict['Total Stars'] = totalStars
+    output_dict['Total Benchmark Stars'] = totalBMStars
     output_dict['Total IC Stars'] = totalICStars
     output_dict['Total Fields'] = totalFields
     output_dict['Seeing Range'] = str(get_seeing_range())
@@ -148,11 +159,14 @@ output_files.append('main.txt')
 # <codecell>
 
 if totalICStars>0:
-    Kmag = ebf.read_ind(const.base_folder+const.IC_folder+'galahic_v2.0L.ebf', '/kmag',allICStars.astype(int))
-#     Bmag = ebf.read_ind(const.base_folder+const.IC_folder+'galahic_v2.0L.ebf', '/apass_bmag',allICStars.astype(int))
-    Vmag = ebf.read_ind(const.base_folder+const.IC_folder+'galahic_v2.0L.ebf', '/apass_vmag',allICStars.astype(int))
-    print 'Creating CMD'
-    create_CMD(Kmag, Vmag)
+    try:
+        Kmag = ebf.read_ind(const.base_folder+const.IC_folder+const.IC_filename, '/kmag',allICStars.astype(int))
+    #     Bmag = ebf.read_ind(const.base_folder+const.IC_folder+'galahic_v2.0L.ebf', '/apass_bmag',allICStars.astype(int))
+        Vmag = ebf.read_ind(const.base_folder+const.IC_folder+const.IC_filename, '/apass_vmag',allICStars.astype(int))
+        print 'Creating CMD'
+        create_CMD(Kmag, Vmag)
+    except:
+        'Could not create CMD'
 else:
     print 'No Input Catalogue stars found. CMD plot skipped'
 
