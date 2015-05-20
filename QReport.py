@@ -21,10 +21,10 @@ base_folder = '/Users/Carlos/Documents/QReport/' #Carlos' laptop
 base_folder = '/home/galah/QReport/' # in aatlxb
 
 IC_folder = 'IC/' #input catalogue folder
-IC_folder = 'IC/' #input catalogue folder
+IC_folder = '/net/aatmacb/data_macb/galah/obsmanager/current/obsmandata/archive/' #input catalogue folder
 
 IC_filename = 'galahic_v2.0L.ebf'
-IC_filename = 'galahic_v2.0L.ebf'
+IC_filename = 'galahic_1.ebf'
 
 log_file = out_folder + 'report.log'
 
@@ -70,6 +70,8 @@ def create_common():
     file.write('d = '+str(d)+'\n')
     file.write('base_folder = \'' +base_folder+'\' \n')
     file.write('IC_folder = \'' +IC_folder+'\' \n')
+    file.write('IC_filename = \'' +IC_filename+'\' \n')
+
     file.close()
     
     

@@ -100,14 +100,13 @@ if okGo==True:
 
     for thisFileName in fileList:
         thisFile = pf.open(thisFileName)
-        if ((thisFile[0].header['NDFCLASS']=='MFOBJECT') or (thisFile[0].header['NDFCLASS']=='MFFLEX')):
+        if ((thisFile[0].header['NDFCLASS']=='MFOBJECT') or (thisFile[0].header['NDFCLASS']=='MFFLX')):
             RA.append(thisFile[0].header['MEANRA'])
             Dec.append(thisFile[0].header['MEANDEC'])
             allFields.append(thisFile[0].header['CFG_FILE'])
             
-
             try:
-                if thisFile[0].header['NDFCLASS']=='MFFLEX':
+                if thisFile[0].header['NDFCLASS']=='MFFLX':
                     BMstars = np.array([thisFile[0].header['STD_NAME']])
                     stars = np.array([])
                     ICStars =np.array([])
@@ -130,7 +129,7 @@ if okGo==True:
             allICStars=np.hstack((allICStars,ICStars.tolist()))
             
         thisFile.close()
-    
+
     allStars = np.unique(allStars)
     allBMStars = np.unique(allBMStars)
     allICStars = np.unique(allICStars)
@@ -164,13 +163,14 @@ output_files.append('main.txt')
 
 if totalICStars>0:
     try:
-        Kmag = ebf.read_ind(const.base_folder+const.IC_folder+const.IC_filename, '/kmag',allICStars.astype(int))
+	Kmag = ebf.read_ind(const.IC_folder+const.IC_filename, '/kmag',allICStars.astype(float))
+	
     #     Bmag = ebf.read_ind(const.base_folder+const.IC_folder+'galahic_v2.0L.ebf', '/apass_bmag',allICStars.astype(int))
-        Vmag = ebf.read_ind(const.base_folder+const.IC_folder+const.IC_filename, '/apass_vmag',allICStars.astype(int))
+        Vmag = ebf.read_ind(const.IC_folder+const.IC_filename, '/apass_vmag',allICStars.astype(float))
         print 'Creating CMD'
         create_CMD(Kmag, Vmag)
     except:
-        'Could not create CMD'
+        print 'Could not create CMD'
 else:
     print 'No Input Catalogue stars found. CMD plot skipped'
 
