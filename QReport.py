@@ -10,7 +10,7 @@ Creates a summary of GALAH data quality for a given date.
 
 #########################
 #Globals
-fromaddr = 'kalumbe@internode.on.net'
+fromaddr = 'galah@aao.gov.au'
 emails = ['kalumbe@gmail.com','kalumbe@internode.on.net'] #email list to send results
 out_folder = 'curr_report/'
 repModules_folder = 'Rmodules/'
@@ -215,7 +215,7 @@ if okGo==True:
         #emails results
         print 'Sending email'
         files = [str(d)+'.tar'] #files to attach to the email. 
-        sendEmail(fromaddr,emails,files)
+#         sendEmail(fromaddr,emails,files)
 
         print 
     else:
