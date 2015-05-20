@@ -109,6 +109,8 @@ if okGo==True:
             try:
                 if thisFile[0].header['NDFCLASS']=='MFFLEX':
                     BMstars = np.array([thisFile[0].header['STD_NAME']])
+                    stars = np.array([])
+                    ICStars =np.array([])
                     
                 else:
                     fibres = thisFile['STRUCT.MORE.FIBRES'].data['TYPE']=='P'
@@ -116,6 +118,8 @@ if okGo==True:
 
                     ICStarsF = np.char.find(stars,'galahic_')!=-1
                     ICStars = np.char.lstrip(stars[ICStarsF],'galahic_').astype(int)
+                    BMstars = np.array([])
+
             except:
                 stars = np.array([])
                 ICStars =np.array([])
