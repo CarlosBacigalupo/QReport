@@ -11,12 +11,20 @@ Creates a summary of GALAH data quality for a given date.
 #########################
 #Globals
 fromaddr = 'galah@aao.gov.au'
+fromaddr = 'kalumbe@internode.on.net'
+
 emails = ['kalumbe@gmail.com','kalumbe@internode.on.net'] #email list to send results
 out_folder = 'curr_report/'
 repModules_folder = 'Rmodules/'
-base_folder = '/Users/Carlos/Documents/QReport/'
+
+base_folder = '/Users/Carlos/Documents/QReport/' #Carlos' laptop
+base_folder = '/home/galah/QReport' # in aatlxb
+
 IC_folder = 'IC/' #input catalogue folder
+
 log_file = out_folder + 'report.log'
+
+galah_dir = '/Users/Carlos/Documents/HERMES/data/'
 galah_dir = '/Users/Carlos/Documents/HERMES/data/'
 
 
