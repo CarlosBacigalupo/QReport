@@ -18,7 +18,6 @@ except:
     print 'core: Sub-modules import failed.'
     okGo = False
 
-# <codecell>
 
 # <HEADER>
 # Date: at the start of the observations (i.e. previous night)
@@ -31,8 +30,6 @@ except:
 # map of all observed fields (color coded by survey/Kepler/other): ??
 # (V,V-K) color-magnitude diagram of newly observed stars: from IC
 
-# <codecell>
-
 def create_CMD(Kmag,Vmag):
     plt.scatter(Vmag-Kmag, Vmag, c='k', s=1)
     plt.title('Observed stars on '+convert_date(const.d))
@@ -44,8 +41,6 @@ def create_CMD(Kmag,Vmag):
 #     plt.show()
     output_files.append('CMD.png')
 
-# <codecell>
-
 def create_fields_map(RA, Dec):
     plt.scatter(RA, Dec, c='k', s=50, marker='+')
     plt.title('Observed fields on '+convert_date(const.d))
@@ -56,8 +51,6 @@ def create_fields_map(RA, Dec):
 #     plt.show()
     output_files.append('fields.png')
 
-# <codecell>
-
 def convert_date(inDate):
     try:
         my_date = datetime.datetime.strptime(str(inDate), "%y%m%d")
@@ -67,8 +60,6 @@ def convert_date(inDate):
         outDate = str(inDate)
     return outDate
 
-# <codecell>
-
 def get_seeing_range():
     sRange = [0., 0.]
     try:
@@ -77,8 +68,6 @@ def get_seeing_range():
     except:
         pass
     return sRange
-
-# <codecell>
 
 output_files = []
 output_dict = {}
@@ -148,8 +137,6 @@ if okGo==True:
     
 #     print 'Total stars:',totalStars,'IC stars:', totalICStars
 
-# <codecell>
-
 print 'Writing main.txt'
 with open('main.txt','w') as f:
     for name, value in sorted(output_dict.items()):
@@ -158,8 +145,6 @@ with open('main.txt','w') as f:
         f.write(str(value))
         f.write('\n')
 output_files.append('main.txt')
-
-# <codecell>
 
 if totalICStars>0:
     try:
@@ -172,11 +157,6 @@ if totalICStars>0:
 else:
     print 'No Input Catalogue stars found. CMD plot skipped'
 
-# <codecell>
-
 print 'Creating fields map'
 create_fields_map(RA, Dec)
-
-# <codecell>
-
 
