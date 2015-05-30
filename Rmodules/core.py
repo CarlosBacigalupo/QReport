@@ -47,7 +47,7 @@ def create_CMD(Kmag,Vmag):
 # <codecell>
 
 def create_fields_map(RA, Dec):
-    plt.scatter(RA, Dec, c='k', s=1)
+    plt.scatter(RA, Dec, c='k', s=50, marker='+')
     plt.title('Observed fields on '+convert_date(const.d))
     plt.xlabel('R.A. [h]')
     plt.ylabel('Dec. [deg]')
@@ -163,12 +163,10 @@ output_files.append('main.txt')
 
 if totalICStars>0:
     try:
-	Kmag = ebf.read_ind(const.IC_folder+const.IC_filename, '/kmag',allICStars.astype(float))
-	
-    #     Bmag = ebf.read_ind(const.base_folder+const.IC_folder+'galahic_v2.0L.ebf', '/apass_bmag',allICStars.astype(int))
-        Vmag = ebf.read_ind(const.IC_folder+const.IC_filename, '/apass_vmag',allICStars.astype(float))
-        print 'Creating CMD'
-        create_CMD(Kmag, Vmag)
+    	Kmag = ebf.read_ind(const.IC_folder+const.IC_filename, '/kmag',allICStars.astype(int))
+    	Vmag = ebf.read_ind(const.IC_folder+const.IC_filename, '/apass_vmag',allICStars.astype(int))
+    	print 'Creating CMD'
+    	create_CMD(Kmag, Vmag)
     except:
         print 'Could not create CMD'
 else:

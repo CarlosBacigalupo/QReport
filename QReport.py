@@ -11,7 +11,7 @@ Creates a summary of GALAH data quality for a given date.
 #########################
 #Globals
 fromaddr = 'galah@aao.gov.au'
-fromaddr = 'kalumbe@internode.on.net'
+#fromaddr = 'kalumbe@internode.on.net'
 
 emails = ['kalumbe@gmail.com','kalumbe@internode.on.net'] #email list to send results
 out_folder = 'curr_report/'
@@ -40,7 +40,7 @@ def sendEmail(fromaddr, toaddrs, files = None):
     msg['From'] = fromaddr
     msg['To'] = ', '.join(toaddrs)
     msg['Date'] = formatdate(localtime=True)
-#     msg.attach(MIMEText('Attached todays summary'))
+    msg.attach(MIMEText('Find attached the summary of GALAH observations from '+str(d)+'.\n The GALAH team.'))
 
     #add attachments
     for f in files or []:
@@ -48,7 +48,7 @@ def sendEmail(fromaddr, toaddrs, files = None):
             msg.attach(MIMEApplication(
                 fil.read(),
                 Content_Disposition='attachment; filename="%s"' % basename(f)
-            ))        
+            )) 		        
 
     # Credentials (if needed)
     username = 'kalumbe'
@@ -166,7 +166,7 @@ if okGo==True:
 #     print 
     
     #loops all reports. Runs and compiles results for each. 
-    print 'Found',len(repModules)-1,'modules.' #common.py is counted but not a report module, hence -1.
+    print 'Found',len(repModules)-2,'module[s].' #common.py and __init__.py are counted but are not report modules, hence -2.
     print 'All tests succeeded. Creating reports...'
     for i,thisModuleName in enumerate(repModules):
         thisModule = None
