@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
-
-# <codecell>
-
 okGo = True
 try:
     import numpy as np
@@ -147,13 +142,20 @@ with open('main.txt','w') as f:
 output_files.append('main.txt')
 
 if totalICStars>0:
-    try:
-    	Kmag = ebf.read_ind(const.IC_folder+const.IC_filename, '/kmag',allICStars.astype(int))
-    	Vmag = ebf.read_ind(const.IC_folder+const.IC_filename, '/apass_vmag',allICStars.astype(int))
-    	print 'Creating CMD'
-    	create_CMD(Kmag, Vmag)
-    except:
-        print 'Could not create CMD'
+#     try:
+    if const.IC_filename=='galahic_v2.0L.ebf':
+        print 'Using ICv2'
+        Kmag = ebf.read_ind(const.IC_folder+const.IC_filename, '/kmag',allICStars.astype(int))
+        Vmag = ebf.read_ind(const.IC_folder+const.IC_filename, '/apass_vmag',allICStars.astype(int))
+    else:
+        print 'Using ICv1'
+        Kmag = ebf.read_ind(const.IC_folder+const.IC_filename, '/data',allICStars.astype(int))['kmag']
+        Vmag = ebf.read_ind(const.IC_folder+const.IC_filename, '/data',allICStars.astype(int))['vmag_jk']
+        
+        print 'Creating CMD'
+    create_CMD(Kmag, Vmag)
+#     except:
+#         print 'Could not create CMD'
 else:
     print 'No Input Catalogue stars found. CMD plot skipped'
 
