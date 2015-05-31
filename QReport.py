@@ -13,7 +13,7 @@ Creates a summary of GALAH data quality for a given date.
 fromaddr = 'galah@aao.gov.au'
 #fromaddr = 'kalumbe@internode.on.net'
 
-emails = ['kalumbe@gmail.com','kalumbe@internode.on.net'] #email list to send results
+emails = ['kalumbe@gmail.com','kalumbe@internode.on.net','s.martell@unsw.edu.au'] #email list to send results
 out_folder = 'curr_report/'
 repModules_folder = 'Rmodules/'
 
